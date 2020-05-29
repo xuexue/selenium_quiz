@@ -112,8 +112,11 @@ def upload_questions(username, password, quiz_path, questions):
         # identify the parent div to enter the data
         enter_mc_question(q, driver)
 
-    #question_group = driver.find_element_by_link_text("add_question_group_link")
-    #question_group.click()
+    # Save the quiz
+    driver.find_element_by_class_name("save_quiz_button").click()
+
+    # Close the window
+    driver.close()
 
 
 if __name__ == "__main__":
