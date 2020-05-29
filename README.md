@@ -65,8 +65,9 @@ Here are the currently supported features:
 Here are the features I'd like to support:
 
 - Essay questions
-
-
-
+- Assigning points per question
+- Numerical answer
+- Matching
+- Fill in the blank
 
 
