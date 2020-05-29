@@ -64,7 +64,18 @@ def enter_mc_question(mcq, driver):
     parent.find_element_by_css_selector('button.submit_button').click()
  
 
-def upload_questions(username, password, quiz_path, questions):
+def upload_questions(username, password, quiz_path, questions,
+                     overwrite=True):
+    """
+    Upload questions to Quercus
+
+    Arguments:
+      username: Quercus login utorid
+      password: Quercus login password
+      quiz_path: HTTP path to the Quercus quiz
+      questions: list of Question objects (see parser.py)
+      overwrite: whether to remove existing questions in the Quercus quiz
+    """
     options = webdriver.ChromeOptions()
     options.add_argument('--ignore-ssl-errors=yes')
     options.add_argument('--ignore-certificate-errors')
