@@ -42,6 +42,10 @@ MC. Why is it a good idea to start paragraphs with a topic sentence that summari
 x So readers can decide whether to skip reading that paragraph.
 * So readers can read your essay backwards.
 
+<text>
+The next few questions will consider the "Communication Theory" readings on Quercus as a message that was communicated to you.
+</text>
+
 MC. Who is the source?
 *
 * The students reading the resource.

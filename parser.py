@@ -6,10 +6,13 @@ class Question(object):
     pass
 
 class TextNoQuestion(Question):
+    type = "text"
     def __init__(self, text):
         self.text = text
 
 class MCQuestion(Question):
+    type = "mc"
+
     def __init__(self, question, answers, comment, ordered=False, img=None):
         self.question = question
         self.answers = answers
@@ -33,7 +36,17 @@ def read_questions_from_file(path):
 
     questions = []
     for line in f:
-        if line.startswith("MC."):
+        if line.lower().startswith("<text>"):
+            # start of a textblock
+            line = next(f)
+            text = ""
+            if not line.lower().startswith("</text>"):
+                text += line
+                line = next(f)
+            obj = TextNoQuestion(text.strip())
+            questions.append(obj)
+
+        elif line.startswith("MC."):
             # start of a multiple choice question
             q = line[3:].rstrip()
             ordered = next(f).rstrip() == "1"

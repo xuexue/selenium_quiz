@@ -11,6 +11,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from parser import read_questions_from_file
 
 
+def enter_text_no_question(mcq, driver):
+    # most of the work will be done in this div
+    parent = driver.find_element_by_css_selector(".multiple_choice_question.ready")
+
+    # set question type to multiple choice
+    question_type = Select(parent.find_element_by_name("question_type"))
+    question_type.select_by_value('text_only_question')
+
+    # add question text body
+    parent.find_element_by_link_text("HTML Editor").click()
+    question_body = parent.find_element_by_css_selector("textarea.question_content")
+    question_body.send_keys(mcq.text)
+
+    # Save question
+    parent.find_element_by_css_selector('button.submit_button').click()
+
+
 def enter_mc_question(mcq, driver):
     # most of the work will be done in this div
     parent = driver.find_element_by_css_selector(".multiple_choice_question.ready")
@@ -61,8 +78,17 @@ def enter_mc_question(mcq, driver):
             comment_box.send_keys(feedback)
             # Click done
             parent.find_element_by_css_selector('a.btn.edit_html_done').click()
+
+    # Save question
     parent.find_element_by_css_selector('button.submit_button').click()
  
+
+DISPATCH = {
+        "mc": enter_mc_question,
+        "text": enter_text_no_question,
+}
+
+
 
 def upload_questions(username, password, quiz_path, questions,
                      overwrite=True):
@@ -121,7 +147,9 @@ def upload_questions(username, password, quiz_path, questions,
     # Add questions
     for q in questions:
         add_question_link.click()
-        enter_mc_question(q, driver)
+
+        fn = DISPATCH[q.type]
+        fn(q, driver)
 
     # Save the quiz
     driver.find_element_by_class_name("save_quiz_button").click()

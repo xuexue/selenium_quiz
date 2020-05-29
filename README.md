@@ -16,7 +16,7 @@ See `example_quiz.md` for an example. If you want to use a different format, you
 `parser.py`. It should be relatively straightforward to write your questions in a different
 format than what I'm using here.
 
-**Multiple Choice**
+### Multiple Choice
 
 - Each multiple choice question begins with the string `MC. ` followed by the question text (no newlines)
 - The next line should be either a `*` if the order of the choices don't matter, or `1` if the order of the choices do matter.
@@ -29,14 +29,27 @@ format than what I'm using here.
 - There should be a blank line at the end of each MC question (including the one at the very end of the fine)
 
 ```
-MC. <question text>
+MC. [question text]
 *
-* <incorrect choice>
-* <incorrect choice>
-  => <optional feedback for this question>
-x <correct choice>
-=> <optional feedback for the entire question>
+* [incorrect choice]
+* [incorrect choice]
+  => [optional feedback for this question]
+x [correct choice]
+=> [optional feedback for the entire question]
 
+```
+
+### Text (no question)
+
+- Begin a text block with the line `<text>`
+- Add one or more line of text
+- End a text block with the line `</text>`
+- Add blank line before the next question
+
+```
+<text>
+[one or more lines of text]
+</text>
 ```
 
 ## Supported Features
@@ -47,10 +60,10 @@ Here are the currently supported features:
 - Multiple choices questions
     - Entering feedback for the entire question
     - Entering feedback for each choice
+- Text (no question)
 
 Here are the features I'd like to support:
 
-- Text (no question)
 - Essay questions
 
 
