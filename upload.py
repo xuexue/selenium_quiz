@@ -83,7 +83,7 @@ def upload_questions(username, password, quiz_path, questions):
     elem.send_keys(Keys.RETURN)
 
     # Wait until page load
-    WebDriverWait(driver, 10).until(EC.title_contains("Test 1"))
+    driver.implicitly_wait(10)
 
     # Find and click on the question tab
     question_tab = driver.find_element_by_id("ui-id-2")
@@ -93,23 +93,23 @@ def upload_questions(username, password, quiz_path, questions):
     add_question_link = driver.find_elements_by_css_selector("a.add_question_link")[-1]
 
     # Remove all the existing questions
-    parent = driver.find_element_by_id("questions")
-    delete_buttons = parent.find_elements_by_class_name("delete_question_link")
-    question_divs = parent.find_elements_by_class_name("question_text")
-    for i in range(len(delete_buttons)-1, -1, -1): # need to go backwards...
-        # We need to move to the question text div to make the delete button
-        # visibel, and then click the button
-        button = delete_buttons[i]
-        div = question_divs[i]
-        ActionChains(driver).move_to_element(div).click(button).perform()
-        # Accept the popup confirmation for the deletion
-        driver.switch_to.alert.accept()
+    if overwrite:
+        parent = driver.find_element_by_id("questions")
+        delete_buttons = parent.find_elements_by_class_name("delete_question_link")
+        question_divs = parent.find_elements_by_class_name("question_text")
+        for i in range(len(delete_buttons)-1, -1, -1): # need to go backwards...
+            # We need to move to the question text div to make the delete button
+            # visibel, and then click the button
+            button = delete_buttons[i]
+            div = question_divs[i]
+            ActionChains(driver).move_to_element(div).click(button).perform()
+            # Accept the popup confirmation for the deletion
+            driver.switch_to.alert.accept()
+            driver.implicitly_wait(10)
 
-    # Try adding a question
+    # Add questions
     for q in questions:
         add_question_link.click()
-        #ActionChains(driver).move_to_element(link).click(link).perform()
-        # identify the parent div to enter the data
         enter_mc_question(q, driver)
 
     # Save the quiz

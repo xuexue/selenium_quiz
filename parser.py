@@ -2,7 +2,14 @@
 Parses the test questions from a text file
 """
 
-class MCQuestion(object):
+class Question(object):
+    pass
+
+class TextNoQuestion(Question):
+    def __init__(self, text):
+        self.text = text
+
+class MCQuestion(Question):
     def __init__(self, question, answers, comment, ordered=False, img=None):
         self.question = question
         self.answers = answers
