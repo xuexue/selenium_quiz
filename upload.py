@@ -11,7 +11,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from parser import read_questions_from_file
 
 
-def enter_mc_question(mcq, parent):
+def enter_mc_question(mcq, driver):
+    # most of the work will be done in this div
+    parent = driver.find_element_by_css_selector(".multiple_choice_question.ready")
+
     # set question type to multiple choice
     question_type = Select(parent.find_element_by_name("question_type"))
     question_type.select_by_value('multiple_choice_question')
@@ -31,12 +34,12 @@ def enter_mc_question(mcq, parent):
     elif diff > 0:
         # remove answers
         trash = parent.find_elements_by_css_selector('a.delete_answer_link')
-        print(len(answers))
-        print(len(trash))
-        import pdb; pdb.set_trace()
-        for i in range(diff):
-            trash[-1-i].click() # remove from the end for no good reason
+        for i in range(diff - 1, -1, -1):
+            button = trash[i]
+            div = answers[i]
+            ActionChains(driver).move_to_element(div).click(button).perform()
 
+    answers = parent.find_elements_by_css_selector('input[name="answer_text"].disabled_answer')
     corrects = parent.find_elements_by_class_name('select_answer_link')
     comments = parent.find_elements_by_class_name('comment_focus')
 
@@ -61,13 +64,13 @@ def enter_mc_question(mcq, parent):
     parent.find_element_by_css_selector('button.submit_button').click()
  
 
-def upload_questions(username, password, questions):
+def upload_questions(username, password, quiz_path, questions):
     options = webdriver.ChromeOptions()
     options.add_argument('--ignore-ssl-errors=yes')
     options.add_argument('--ignore-certificate-errors')
     driver = webdriver.Chrome(options=options)
 
-    driver.get("https://q.utoronto.ca/courses/7405/quizzes/79201/edit")
+    driver.get(quiz_path)
 
     # LOGIN
     elem = driver.find_element_by_id("username")
@@ -86,9 +89,11 @@ def upload_questions(username, password, questions):
     question_tab = driver.find_element_by_id("ui-id-2")
     question_tab.click()
 
-    parent = driver.find_element_by_id("questions")
+    # We'll need this link later
+    add_question_link = driver.find_elements_by_css_selector("a.add_question_link")[-1]
 
     # Remove all the existing questions
+    parent = driver.find_element_by_id("questions")
     delete_buttons = parent.find_elements_by_class_name("delete_question_link")
     question_divs = parent.find_elements_by_class_name("question_text")
     for i in range(len(delete_buttons)-1, -1, -1): # need to go backwards...
@@ -102,11 +107,10 @@ def upload_questions(username, password, questions):
 
     # Try adding a question
     for q in questions:
-        # click add question
-        driver.find_element_by_css_selector("a.add_question_link").click()
+        add_question_link.click()
+        #ActionChains(driver).move_to_element(link).click(link).perform()
         # identify the parent div to enter the data
-        mc_div = driver.find_element_by_css_selector(".multiple_choice_question.ready")
-        enter_mc_question(q, mc_div)
+        enter_mc_question(q, driver)
 
     #question_group = driver.find_element_by_link_text("add_question_group_link")
     #question_group.click()
@@ -118,4 +122,5 @@ if __name__ == "__main__":
 
     utorid = input("utorid: ").strip()
     passwd = getpass.getpass("password: ").strip()
-    upload_questions(utorid, passwd, questions)
+    quiz_path = "https://q.utoronto.ca/courses/7405/quizzes/79201/edit"
+    upload_questions(utorid, passwd, quiz_path, questions)
