@@ -12,7 +12,7 @@ to Quercus. Text files have the advantage of being version controllable.
 
 ## Question Format
 
-See `example_quiz.md` for an example. If you want to use a different format, you can change
+See `example_quiz.txt` for an example. If you want to use a different format, you can change
 `parser.py`. It should be relatively straightforward to write your questions in a different
 format than what I'm using here.
 

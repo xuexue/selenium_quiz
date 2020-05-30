@@ -177,7 +177,7 @@ def upload_questions(username, password, quiz_path, questions,
 
 
 if __name__ == "__main__":
-    path = "example_quiz.md"
+    path = "example_quiz.txt"
     questions = read_questions_from_file(path)
 
     utorid = input("utorid: ").strip()
