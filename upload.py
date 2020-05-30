@@ -10,36 +10,50 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from parser import read_questions_from_file
 
+# HELPER FUNCTION BLOCK ========================
+
+def get_question_div(driver):
+    """Get the parent div for the edited question."""
+    return driver.find_element_by_css_selector(".multiple_choice_question.ready")
+
+def save_question(question_div):
+    """Click the submit button to save the question."""
+    question_div.find_element_by_css_selector('button.submit_button').click()
+
+def set_question_type(question_div, value):
+    """Select question type from dropdown."""
+    question_type = Select(question_div.find_element_by_name("question_type"))
+    question_type.select_by_value(value)
+
+def set_main_question_text(question_div, text):
+    """Set the main question text using the HTML editor to avoid iframes."""
+    question_div.find_element_by_link_text("HTML Editor").click()
+    question_body = question_div.find_element_by_css_selector("textarea.question_content")
+    question_body.send_keys(text)
+
+# QUESTIONS ========================
 
 def enter_text_no_question(mcq, driver):
-    # most of the work will be done in this div
-    parent = driver.find_element_by_css_selector(".multiple_choice_question.ready")
+    parent = get_question_div(driver)
+    set_question_type(parent, 'text_only_question')
+    set_main_question_text(parent, mcq.text)
+    save_question(parent)
 
-    # set question type to multiple choice
-    question_type = Select(parent.find_element_by_name("question_type"))
-    question_type.select_by_value('text_only_question')
-
-    # add question text body
-    parent.find_element_by_link_text("HTML Editor").click()
-    question_body = parent.find_element_by_css_selector("textarea.question_content")
-    question_body.send_keys(mcq.text)
-
-    # Save question
-    parent.find_element_by_css_selector('button.submit_button').click()
-
+def enter_essay_question(mcq, driver):
+    parent = get_question_div(driver)
+    set_question_type(parent, 'essay_question')
+    set_main_question_text(parent, mcq.text)
+    save_question(parent)
 
 def enter_mc_question(mcq, driver):
     # most of the work will be done in this div
-    parent = driver.find_element_by_css_selector(".multiple_choice_question.ready")
+    parent = get_question_div(driver)
 
     # set question type to multiple choice
-    question_type = Select(parent.find_element_by_name("question_type"))
-    question_type.select_by_value('multiple_choice_question')
+    set_question_type(parent, 'multiple_choice_question')
 
     # add question text body
-    parent.find_element_by_link_text("HTML Editor").click()
-    question_body = parent.find_element_by_css_selector("textarea.question_content")
-    question_body.send_keys(mcq.question)
+    set_main_question_text(parent, mcq.question)
 
     # correct number of answer choices in the HTML
     answers = parent.find_elements_by_css_selector('input[name="answer_text"].disabled_answer')
@@ -83,15 +97,16 @@ def enter_mc_question(mcq, driver):
             parent.find_element_by_css_selector('a.btn.edit_html_done').click()
 
     # Save question
-    parent.find_element_by_css_selector('button.submit_button').click()
+    save_question(parent)
  
 
 DISPATCH = {
         "mc": enter_mc_question,
         "text": enter_text_no_question,
+        "essay": enter_essay_question,
 }
 
-
+# MAIN ========================
 
 def upload_questions(username, password, quiz_path, questions,
                      overwrite=True):
@@ -158,7 +173,7 @@ def upload_questions(username, password, quiz_path, questions,
     driver.find_element_by_class_name("save_quiz_button").click()
 
     # Close the window
-    driver.close()
+    #driver.close()
 
 
 if __name__ == "__main__":

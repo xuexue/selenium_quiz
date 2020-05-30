@@ -52,6 +52,20 @@ x [correct choice]
 </text>
 ```
 
+### Essay
+
+- Begin a block with the line `<essay>`
+- Add one or more line of text
+- End a block with the line `</essay>`
+- Add blank line before the next question
+
+```
+<essay>
+[one or more lines of text]
+</essay>
+```
+
+
 ## Supported Features
 
 Here are the currently supported features:
@@ -61,10 +75,10 @@ Here are the currently supported features:
     - Entering feedback for the entire question
     - Entering feedback for each choice
 - Text (no question)
+- Essay questions
 
 Here are the features I'd like to support:
 
-- Essay questions
 - Assigning points per question
 - Numerical answer
 - Matching

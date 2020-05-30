@@ -10,6 +10,12 @@ class TextNoQuestion(Question):
     def __init__(self, text):
         self.text = text
 
+
+class EssayQuestion(Question):
+    type = "essay"
+    def __init__(self, text):
+        self.text = text
+
 class MCQuestion(Question):
     type = "mc"
 
@@ -45,6 +51,17 @@ def read_questions_from_file(path):
                 line = next(f)
             obj = TextNoQuestion(text.strip())
             questions.append(obj)
+
+        elif line.lower().startswith("<essay>"):
+            # start of a textblock
+            line = next(f)
+            text = ""
+            if not line.lower().startswith("</essay>"):
+                text += line
+                line = next(f)
+            obj = EssayQuestion(text.strip())
+            questions.append(obj)
+
 
         elif line.startswith("MC."):
             # start of a multiple choice question
