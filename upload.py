@@ -71,6 +71,9 @@ def enter_mc_question(mcq, driver):
         if feedback:
             # Click to open up comment box
             comments[i].click()
+            # Wait to prevent race condition
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//a[contains(@class, 'switch-views__link')]")))
+
             # Switch to HTML view
             parent.find_element_by_css_selector('a.switch-views__link').click()
             # Enter comments
@@ -120,7 +123,7 @@ def upload_questions(username, password, quiz_path, questions,
     elem.send_keys(Keys.RETURN)
 
     # Wait until page load
-    driver.implicitly_wait(10)
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-2")))
 
     # Find and click on the question tab
     question_tab = driver.find_element_by_id("ui-id-2")
@@ -142,7 +145,7 @@ def upload_questions(username, password, quiz_path, questions,
             ActionChains(driver).move_to_element(div).click(button).perform()
             # Accept the popup confirmation for the deletion
             driver.switch_to.alert.accept()
-            driver.implicitly_wait(10)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-2")))
 
     # Add questions
     for q in questions:
