@@ -79,6 +79,7 @@ Here are the currently supported features:
 
 Here are the features I'd like to support:
 
+- Question groups
 - Assigning points per question
 - Numerical answer
 - Matching
