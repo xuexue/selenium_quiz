@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-from parser import read_questions_from_file
+from parser import read_questions_from_file, QuestionBlock
 
 # HELPER FUNCTION BLOCK ========================
 
@@ -98,6 +98,34 @@ def enter_mc_question(mcq, driver):
 
     # Save question
     save_question(parent)
+
+
+def enter_question_group(qg, driver):
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'quiz_sortable')]")))
+    parent = driver.find_element_by_id("questions")
+    parent = parent.find_elements_by_class_name("quiz_sortable")[-1]
+
+    # Enter the num questions and pts per questions for the group
+    numq = parent.find_element_by_css_selector('input[name="quiz_group[pick_count]"]')
+    numq.clear()
+    numq.send_keys(qg.num_questions)
+
+    numpt = parent.find_element_by_css_selector('input[name="quiz_group[question_points]"]')
+    numpt.clear()
+    numpt.send_keys(qg.num_pts)
+
+    # Click "Create Group"
+    parent.find_element_by_class_name('submit_button').click()
+
+    # Add actual questions
+    add_button = parent.find_element_by_class_name("add_question_link")
+
+    # Iterate over each question in the question group, and add it
+    for q in qg.questions:
+        add_button.click()
+        fn = DISPATCH[q.type]
+        fn(q, driver)
+
  
 
 DISPATCH = {
@@ -146,10 +174,12 @@ def upload_questions(username, password, quiz_path, questions,
 
     # We'll need this link later
     add_question_link = driver.find_elements_by_css_selector("a.add_question_link")[-1]
+    add_question_group_link = driver.find_elements_by_css_selector("a.add_question_group_link")[-1]
 
     # Remove all the existing questions
     if overwrite:
         parent = driver.find_element_by_id("questions")
+        # delete the questions
         delete_buttons = parent.find_elements_by_class_name("delete_question_link")
         question_divs = parent.find_elements_by_class_name("question_text")
         for i in range(len(delete_buttons)-1, -1, -1): # need to go backwards...
@@ -162,12 +192,25 @@ def upload_questions(username, password, quiz_path, questions,
             driver.switch_to.alert.accept()
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-2")))
 
+        # Delete the question groups. Code is duplicated from above
+        delete_buttons = parent.find_elements_by_class_name("delete_group_link")
+        question_divs = parent.find_elements_by_class_name("group_top")
+        for i in range(len(delete_buttons)-1, -1, -1):
+            button = delete_buttons[i]
+            div = question_divs[i]
+            ActionChains(driver).move_to_element(div).click(button).perform()
+            driver.switch_to.alert.accept()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ui-id-2")))
+
     # Add questions
     for q in questions:
-        add_question_link.click()
-
-        fn = DISPATCH[q.type]
-        fn(q, driver)
+        if type(q) == QuestionBlock:
+            add_question_group_link.click()
+            enter_question_group(q, driver)
+        else:
+            add_question_link.click()
+            fn = DISPATCH[q.type]
+            fn(q, driver)
 
     # Save the quiz
     driver.find_element_by_class_name("save_quiz_button").click()
