@@ -177,10 +177,19 @@ def upload_questions(username, password, quiz_path, questions,
 
 
 if __name__ == "__main__":
-    path = "example_quiz.txt"
-    questions = read_questions_from_file(path)
+    EXAMPLE_FILE_PATH = "example_quiz.txt"
 
-    utorid = input("utorid: ").strip()
+    import argparse
+    parser = argparse.ArgumentParser(description='Upload Quercus Quiz content from text file')
+    parser.add_argument('--file', type=str, help='Text file containing quiz content',
+                        default=EXAMPLE_FILE_PATH)
+    parser.add_argument('--url', type=str, help='URL of Quercus quiz')
+    parser.add_argument('--utorid', type=str, help='UTORID for signing into Quercus')
+    parser.add_argument('--overwrite', dest='overwrite', action='store_true',
+                        default=False, help='Remove existing content already on Quercus')
+    args = parser.parse_args()
+
+    questions = read_questions_from_file(args.file)
+
     passwd = getpass.getpass("password: ").strip()
-    quiz_path = "https://q.utoronto.ca/courses/7405/quizzes/79201/edit"
-    upload_questions(utorid, passwd, quiz_path, questions)
+    upload_questions(args.utorid, passwd, args.url, questions, args.overwrite)
