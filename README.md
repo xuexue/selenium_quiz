@@ -25,7 +25,10 @@ format than what I'm using here.
 ### Multiple Choice
 
 - Each multiple choice question begins with the string `MC. ` followed by the question text (no newlines)
-- The next line should be either a `*` if the order of the choices don't matter, or `1` if the order of the choices do matter.
+- The next line should be either a `*` if the order of the choices don't matter,
+  or `1` if the order of the choices do matter.
+  (Note: for now both `*` and `1` does the same thing. Later on, I plan on having the script shuffle
+  the choices if the order of the choices don't matter.)
 - Text next few lines will be your potential answers. Begin each answer choice with either a `* ` if it is incorrect,
   or a `x `  if it is the correct chocie.
 - Each choice can have an optional feedback text in the next line, provided the feedback line
@@ -35,13 +38,13 @@ format than what I'm using here.
 - There should be a blank line at the end of each MC question (including the one at the very end of the fine)
 
 ```
-MC. [question text]
+MC. question text
 *
-* [incorrect choice]
-* [incorrect choice]
-  => [optional feedback for this question]
-x [correct choice]
-=> [optional feedback for the entire question]
+* incorrect choice
+* incorrect choice
+  => optional feedback for this question
+x correct choice
+=> optional feedback for the entire question
 
 ```
 
@@ -54,7 +57,7 @@ x [correct choice]
 
 ```
 <text>
-[one or more lines of text]
+one or more lines of text
 </text>
 ```
 
@@ -67,7 +70,7 @@ x [correct choice]
 
 ```
 <essay>
-[one or more lines of text]
+Essay question text
 </essay>
 ```
 
