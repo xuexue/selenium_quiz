@@ -10,7 +10,6 @@ class TextNoQuestion(Question):
     def __init__(self, text):
         self.text = text
 
-
 class EssayQuestion(Question):
     type = "essay"
     def __init__(self, text):
@@ -37,11 +36,49 @@ class MCQuestion(Question):
                 return ans[i]
         raise ValueError("Unknown answer for question %s" + self.question)
 
+class QuestionBlock(object):
+    type = "block"
+    def __init__(self, num_questions, num_pts):
+        self.num_questions = num_questions
+        self.num_pts = num_pts
+        self.questions = []
+
+    def add_question(self, obj):
+        self.questions.append(obj)
+
+
 def read_questions_from_file(path):
     f = open(path)
 
+    # Used to accumulate Question and QuestionBlock objects
     questions = []
+
+    # Boolean to determine whether questions are to be added to a
+    # QuestionBlock
+    question_block = False
+
     for line in f:
+        if line.startswith("# "):
+            if "[" in line and "]" in line:
+                # start a new question block
+                question_block = True
+
+                # extract metadata about this question block
+                # should be of the form "[1 question, 1 pt]"
+                meta = line.split("[")[-1].split(" ")
+
+                num_questions = int(meta[0])
+                try:
+                    num_points = int(meta[2])
+                except:
+                    num_points = 1 # optional
+
+                questions.append(QuestionBlock(num_questions, num_points))
+            else:
+                # go back to not having question blocks
+                question_block = False
+
+        obj = None # new question object to be added (if any)
         if line.lower().startswith("<text>"):
             # start of a textblock
             line = next(f)
@@ -50,7 +87,6 @@ def read_questions_from_file(path):
                 text += line
                 line = next(f)
             obj = TextNoQuestion(text.strip())
-            questions.append(obj)
 
         elif line.lower().startswith("<essay>"):
             # start of a textblock
@@ -60,8 +96,6 @@ def read_questions_from_file(path):
                 text += line
                 line = next(f)
             obj = EssayQuestion(text.strip())
-            questions.append(obj)
-
 
         elif line.startswith("MC."):
             # start of a multiple choice question
@@ -90,7 +124,18 @@ def read_questions_from_file(path):
                 comment = line[5:]
 
             obj = MCQuestion(q, answers, comment, ordered, img)
-            questions.append(obj)
+
+        if obj is not None:
+            if question_block:
+                assert type(questions[-1]) == QuestionBlock
+                questions[-1].add_question(obj)
+            else:
+                questions.append(obj)
     return questions
+
+
+if __name__ == "__main__":
+    EXAMPLE_FILE_PATH = "example_quiz.txt"
+    questions = read_questions_from_file(EXAMPLE_FILE_PATH )
 
 

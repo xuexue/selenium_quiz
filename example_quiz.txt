@@ -1,4 +1,4 @@
-# SMCR Model of Communication
+# SMCR Model of Communication [2 question, 1 pt]
 
 MC. In the SMCR model of communication, what is an aspect of the receiver that the source should consider before choosing the channel and crafting the message?
 *
@@ -34,6 +34,8 @@ x Exactly one idea.
 * Between 1-3 ideas.
 * As many ideas as necessary.
 
+# This comment ends a question block
+
 MC. Why is it a good idea to start paragraphs with a topic sentence that summarizes the paragraph?
 *
 * Because everyone learned to write this way in high school, so it is now an evolved structure.
@@ -45,6 +47,8 @@ x So readers can decide whether to skip reading that paragraph.
 <text>
 The next few questions will consider the "Communication Theory" readings on Quercus as a message that was communicated to you.
 </text>
+
+# SMCR BLock [1 question, 1 pt]
 
 MC. Who is the source?
 *
@@ -61,6 +65,8 @@ x The students reading the resource.
 * The web server hosting the resource.
 * The student's computer displaying the resource.
 * David Berlo, the person who came up with the SMCR model of communication.
+
+# Back to normal
 
 <essay>
 This is an essay question.
