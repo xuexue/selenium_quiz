@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-from parser import read_questions_from_file, QuestionBlock
+from quiz_parser import read_questions_from_file, QuestionBlock
 
 # HELPER FUNCTION BLOCK ========================
 

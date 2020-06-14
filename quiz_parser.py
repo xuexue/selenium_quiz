@@ -137,5 +137,3 @@ def read_questions_from_file(path):
 if __name__ == "__main__":
     EXAMPLE_FILE_PATH = "example_quiz.txt"
     questions = read_questions_from_file(EXAMPLE_FILE_PATH )
-
-
