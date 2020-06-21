@@ -82,19 +82,19 @@ def read_questions_from_file(path):
         if line.lower().startswith("<text>"):
             # start of a textblock
             line = next(f)
-            text = ""
-            if not line.lower().startswith("</text>"):
-                text += line
+            text = line
+            while not line.lower().startswith("</text>"):
                 line = next(f)
+                text += line
             obj = TextNoQuestion(text.strip())
 
         elif line.lower().startswith("<essay>"):
             # start of a textblock
             line = next(f)
-            text = ""
-            if not line.lower().startswith("</essay>"):
-                text += line
+            text = line
+            while not line.lower().startswith("</essay>"):
                 line = next(f)
+                text += line
             obj = EssayQuestion(text.strip())
 
         elif line.startswith("MC."):
@@ -119,6 +119,9 @@ def read_questions_from_file(path):
                     comment = line[5:].strip()
                     line = next(f).rstrip()
                 answers.append((correct, choice, comment),)
+
+                if line.startswith('=>'):
+                    break
 
             if line.startswith('=>'):
                 comment = line[5:]
